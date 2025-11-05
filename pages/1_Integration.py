@@ -667,29 +667,46 @@ if uploaded_file:
                 st.write("🧠 Condensing extracted RFP content for faster processing...")
 
                 # 🧩 --- AzureOpenAI Safe Initialization Block ---
-                from openai import AzureOpenAI, OpenAI
+                from openai import AzureOpenAI
+                import httpx
                 import os, streamlit as st
 
-                # Clean Azure environment variables
+                # --- Clean Azure environment variables ---
                 endpoint = os.getenv("AZURE_OPENAI_FRFP_ENDPOINT", "").strip()
                 key = os.getenv("AZURE_OPENAI_FRFP_KEY", "").strip()
                 version = os.getenv("AZURE_OPENAI_FRFP_VERSION", "").strip()
 
-                # --- Safety patch: remove proxy vars that break Azure SDK ---
+                # --- Safety patch: Remove Streamlit Cloud proxy vars ---
                 for var in ["HTTP_PROXY", "HTTPS_PROXY", "ALL_PROXY"]:
-                    if var in os.environ:
-                        del os.environ[var]
+                    os.environ.pop(var, None)
 
-                # --- Validate & Initialize Client ---
                 st.write("🔧 Debug Info:")
                 st.write(f"Endpoint: {endpoint}")
                 st.write(f"Version: {version}")
                 st.write(f"Key present: {bool(key)}")
 
                 if not all([endpoint, key, version]):
-                    st.error("❌ Missing or invalid Azure credentials. Check secrets.")
+                    st.error("❌ Missing or invalid Azure credentials. Check Streamlit secrets.")
                     st.stop()
-                else:
+
+                try:
+                    # ✅ Create a custom httpx client WITHOUT proxies
+                    no_proxy_client = httpx.Client(proxies=None, timeout=60)
+
+                    client = AzureOpenAI(
+                        azure_endpoint=endpoint,
+                        api_key=key,
+                        api_version=version,
+                        http_client=no_proxy_client,  # 👈 critical line that disables Streamlit’s proxy
+                    )
+
+                    st.success("✅ AzureOpenAI client initialized successfully!")
+
+                except Exception as e:
+                    st.error(f"🚨 Azure client initialization failed: {e}")
+                    st.stop()
+
+                
                     # try:
                     #     # ✅ Final fix: disable Streamlit Cloud proxy injection
                     #     # client = AzureOpenAI(

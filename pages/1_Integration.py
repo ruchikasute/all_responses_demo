@@ -667,7 +667,7 @@ if uploaded_file:
                 st.write("🧠 Condensing extracted RFP content for faster processing...")
 
                 # 🧩 --- AzureOpenAI Safe Initialization Block ---
-                from openai import AzureOpenAI
+                from openai import AzureOpenAI, DefaultHttpxClient, OpenAI
                 import os, streamlit as st
 
                 # Clean Azure environment variables
@@ -691,19 +691,27 @@ if uploaded_file:
                     st.stop()
                 else:
                     try:
+                        # ✅ Final fix: disable Streamlit Cloud proxy injection
                         client = AzureOpenAI(
                             azure_endpoint=endpoint,
                             api_key=key,
-                            api_version=version
+                            api_version=version,
+                            http_client=DefaultHttpxClient(proxies=None)
                         )
                         st.success("✅ AzureOpenAI client initialized successfully!")
+
+                    except TypeError:
+                        # fallback if Streamlit still interferes
+                        st.warning("⚠️ AzureOpenAI failed, using standard OpenAI client instead.")
+                        client = OpenAI(api_key=key, base_url=f"{endpoint}/openai/deployments/Codetest")
+
                     except Exception as e:
                         st.error(f"🚨 Azure client failed: {e}")
                         st.stop()
 
-                # Now safely call condense function
+                # --- Continue your logic after client setup ---
                 condensed_rfp = condense_rfp_text(rfp_text, client)
-                # 🧩 --- End of fix ---
+
 
                 time.sleep(1)
                 # --- 🔍 Auto-detect number of interfaces / integrations from RFP text ---

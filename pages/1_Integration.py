@@ -597,11 +597,15 @@ if uploaded_file:
                 # rfp_text = extract_text(uploaded_file)
                 rfp_text = extract_text(uploaded_file)
                 st.write("🧠 Condensing extracted RFP content for faster processing...")
+                from openai import AzureOpenAI
+                import os
+
                 client = AzureOpenAI(
-                    azure_endpoint=os.getenv("AZURE_OPENAI_FRFP_ENDPOINT"),
                     api_key=os.getenv("AZURE_OPENAI_FRFP_KEY"),
-                    api_version=os.getenv("AZURE_OPENAI_FRFP_VERSION")
+                    api_version=os.getenv("AZURE_OPENAI_FRFP_VERSION"),
+                    azure_endpoint=os.getenv("AZURE_OPENAI_FRFP_ENDPOINT"),
                 )
+
                 condensed_rfp = condense_rfp_text(rfp_text, client)
 
 

@@ -11,26 +11,26 @@
 # pinecone-client
 
 
-# Core framework
+# --- Core Framework ---
 streamlit==1.51.0
 python-dotenv==1.0.1
 
-# OpenAI SDK (compatible with old LangChain bridge)
+# --- OpenAI SDK ---
 openai==1.35.13
 
-# LangChain family (locked to stable combo)
+# --- LangChain Ecosystem (Stable Versions) ---
 langchain==0.2.12
 langchain-core==0.2.34
 langchain-community==0.2.11
 langchain-openai==0.1.6
 langchain-pinecone==0.1.2
 
-# Pinecone old client
+# --- Vector DB ---
 pinecone-client==2.2.4
 
-# Embeddings + NLP
+# --- NLP / Embeddings ---
 sentence-transformers==2.2.2
 
-# Document handling
+# --- Document Handling ---
 python-docx==1.1.2
 PyPDF2==3.0.1

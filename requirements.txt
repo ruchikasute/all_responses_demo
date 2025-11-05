@@ -12,17 +12,17 @@
 
 
 # Core framework
-streamlit==1.35.0
+streamlit==1.51.0
 python-dotenv==1.0.1
 
-# OpenAI / Azure
-openai==1.35.13
+# OpenAI SDK (modern)
+openai==1.54.4
 
-# LangChain ecosystem (versions must align)
-langchain==0.3.0
-langchain-core==0.3.15
-langchain-community==0.3.0
-langchain-openai==0.2.4
+# LangChain ecosystem (matching internal APIs)
+langchain==0.3.7
+langchain-core==0.3.19
+langchain-community==0.3.7
+langchain-openai==0.2.7
 langchain-pinecone==0.2.3
 
 # Vector DB

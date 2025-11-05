@@ -35,12 +35,12 @@ python-dotenv==1.0.1
 # --- OpenAI SDK ---
 openai==1.35.13
 
-# --- LangChain Ecosystem (Aligned versions) ---
-# CRITICAL FIX: Upgraded core to 0.3.x to satisfy langchain-openai 0.2.11
-langchain==0.2.11 
-langchain-community==0.2.11
-langchain-core==0.3.21  # This meets the required >=0.3.21
-langchain-openai==0.2.11 
+# --- LangChain Ecosystem (FULLY ALIGNED TO 0.3.x) ---
+# FIX: Upgrade to 0.3.x to resolve conflict with langchain-core==0.3.21
+langchain==0.3.27          # Use a stable version in the 0.3.x range
+langchain-community==0.3.31 # Use a stable version in the 0.3.x range
+langchain-core==0.3.21     # The version required by langchain-openai
+langchain-openai==0.2.11   # The integration package you require
 langchain-pinecone==0.0.3
 
 # --- Vector DB ---

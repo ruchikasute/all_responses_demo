@@ -28,30 +28,15 @@
 
 
 
-# NOTE 1: YOU MUST USE PYTHON >= 3.10 FOR THIS STACK!
-
---- Core Framework ---
 streamlit==1.51.0
 python-dotenv==1.0.1
-
-# --- OpenAI SDK ---
 openai==1.35.13
-
-# --- LangChain Ecosystem (FULLY ALIGNED TO 0.3.x) ---
-langchain==0.3.27          
-langchain-community==0.3.31 
-langchain-core==0.3.21     
-langchain-openai==0.2.11   
-langchain-pinecone==0.0.1  # CRITICAL: Keeping this version as it's the known workaround for 1.0 conflicts
-
-# --- Vector DB ---
-# RECOMMENDED: Upgrade to a 3.x client version for better stability/API alignment.
-# The latest major versions of LangChain (non-0.0.1) require pinecone-client >= 3.2.2
-pinecone-client==3.2.2
-
-# --- NLP / Embeddings ---
+langchain==0.1.16
+langchain-core==0.1.52
+langchain-community==0.0.35
+langchain-openai==0.0.8
+langchain-pinecone==0.0.3
+pinecone-client==2.2.4
 sentence-transformers==2.2.2
-
-# --- Document Handling ---
 python-docx==1.1.2
 PyPDF2==3.0.1

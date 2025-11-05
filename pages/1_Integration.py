@@ -667,7 +667,7 @@ if uploaded_file:
                 st.write("🧠 Condensing extracted RFP content for faster processing...")
 
                 # 🧩 --- AzureOpenAI Safe Initialization Block ---
-                from openai import AzureOpenAI, DefaultHttpxClient, OpenAI
+                from openai import AzureOpenAI, OpenAI
                 import os, streamlit as st
 
                 # Clean Azure environment variables
@@ -692,12 +692,18 @@ if uploaded_file:
                 else:
                     try:
                         # ✅ Final fix: disable Streamlit Cloud proxy injection
+                        # client = AzureOpenAI(
+                        #     azure_endpoint=endpoint,
+                        #     api_key=key,
+                        #     api_version=version,
+                        #     http_client=DefaultHttpxClient(proxies=None)
+                        # )
                         client = AzureOpenAI(
                             azure_endpoint=endpoint,
                             api_key=key,
                             api_version=version,
-                            http_client=DefaultHttpxClient(proxies=None)
                         )
+
                         st.success("✅ AzureOpenAI client initialized successfully!")
 
                     except TypeError:

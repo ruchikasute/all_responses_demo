@@ -583,36 +583,130 @@ st.markdown("---")
 st.markdown("### ⚙️ Proposal Configuration")
 
 
-# --- Conditional Logic ---
-if uploaded_file:
+# # --- Conditional Logic ---
+# if uploaded_file:
 
+#         st.markdown("### ✍️ Step 2: Generating Your Proposal Response")
+#         with st.spinner("Analyzing RFP and preparing your AI-driven proposal response..."):
+
+
+#             with st.status("🚀 Generating Proposal Sections...", expanded=True) as status:
+        
+#                 # STEP 1: Extract content
+#                 st.write("1/6 🔎 Extracting RFP content...")
+#                 # rfp_text = extract_text(uploaded_file)
+#                 rfp_text = extract_text(uploaded_file)
+#                 st.write("🧠 Condensing extracted RFP content for faster processing...")
+#                 from openai import AzureOpenAI
+#                 import os
+
+#                 client = AzureOpenAI(
+#                     api_key=os.getenv("AZURE_OPENAI_FRFP_KEY"),
+#                     api_version=os.getenv("AZURE_OPENAI_FRFP_VERSION"),
+#                     azure_endpoint=os.getenv("AZURE_OPENAI_FRFP_ENDPOINT"),
+#                 )
+
+#                 condensed_rfp = condense_rfp_text(rfp_text, client)
+
+
+
+#                 time.sleep(1)
+#                 # --- 🔍 Auto-detect number of interfaces / integrations from RFP text ---
+#                 # import re
+#                 rfp_text = rfp_text.replace(",", "")
+
+#                 priority_keywords = ["ICOs?", "iCos?", "integration configuration objects?"]
+#                 general_keywords = [
+#                     "interfaces?", "integration points?", "flows?", "connections?",
+#                     "touchpoints?", "IFlows?", "mappings?", "adapters?"
+#                 ]
+
+#                 # First: look specifically for ICO mentions
+#                 ico_pattern = r'~?\b(\d{1,5})\s*(?:' + "|".join(priority_keywords) + r')\b'
+#                 ico_matches = re.findall(ico_pattern, rfp_text, flags=re.IGNORECASE)
+
+#                 if ico_matches:
+#                     num_interfaces = max(map(int, ico_matches))
+#                     detected_type = "ICOs"
+#                 else:
+#                     # fallback to general terms like 'interfaces' if ICOs not found
+#                     pattern = r'~?\b(\d{1,5})\s*(?:' + "|".join(general_keywords) + r')\b'
+#                     matches = re.findall(pattern, rfp_text, flags=re.IGNORECASE)
+
+#                     if matches:
+#                         num_interfaces = max(map(int, matches))
+#                         detected_type = "interfaces"
+#                     else:
+#                         num_interfaces = None
+#                         detected_type = None
+
+#                                 # Display result
+#                 if num_interfaces:
+#                     st.info(f"📊 Detected approximately **{num_interfaces} {detected_type}** in RFP.")
+#                 else:
+#                     st.warning("⚠️ No explicit integration count detected — using default or manual input.")
+
+                
+#                 if len(rfp_text.strip()) < 100:
+#                     status.update(label="Extraction Failed", state="error", expanded=False)
+#                     st.error("Could not extract enough text from the document. Please check the file.")
+#                     st.stop()
+                
+#                 st.success("1/6 ✅ RFP content extracted!")
+#                 status.update(label="🚀 Generating Proposal Sections... (20% Complete)", state="running")
+
+                # --- Conditional Logic ---
+if uploaded_file:
         st.markdown("### ✍️ Step 2: Generating Your Proposal Response")
         with st.spinner("Analyzing RFP and preparing your AI-driven proposal response..."):
-
-
             with st.status("🚀 Generating Proposal Sections...", expanded=True) as status:
-        
+                
                 # STEP 1: Extract content
                 st.write("1/6 🔎 Extracting RFP content...")
-                # rfp_text = extract_text(uploaded_file)
                 rfp_text = extract_text(uploaded_file)
                 st.write("🧠 Condensing extracted RFP content for faster processing...")
+
+                # 🧩 --- AzureOpenAI Safe Initialization Block ---
                 from openai import AzureOpenAI
-                import os
+                import os, streamlit as st
 
-                client = AzureOpenAI(
-                    api_key=os.getenv("AZURE_OPENAI_FRFP_KEY"),
-                    api_version=os.getenv("AZURE_OPENAI_FRFP_VERSION"),
-                    azure_endpoint=os.getenv("AZURE_OPENAI_FRFP_ENDPOINT"),
-                )
+                # Clean Azure environment variables
+                endpoint = os.getenv("AZURE_OPENAI_FRFP_ENDPOINT", "").strip()
+                key = os.getenv("AZURE_OPENAI_FRFP_KEY", "").strip()
+                version = os.getenv("AZURE_OPENAI_FRFP_VERSION", "").strip()
 
+                # --- Safety patch: remove proxy vars that break Azure SDK ---
+                for var in ["HTTP_PROXY", "HTTPS_PROXY", "ALL_PROXY"]:
+                    if var in os.environ:
+                        del os.environ[var]
+
+                # --- Validate & Initialize Client ---
+                st.write("🔧 Debug Info:")
+                st.write(f"Endpoint: {endpoint}")
+                st.write(f"Version: {version}")
+                st.write(f"Key present: {bool(key)}")
+
+                if not all([endpoint, key, version]):
+                    st.error("❌ Missing or invalid Azure credentials. Check secrets.")
+                    st.stop()
+                else:
+                    try:
+                        client = AzureOpenAI(
+                            azure_endpoint=endpoint,
+                            api_key=key,
+                            api_version=version
+                        )
+                        st.success("✅ AzureOpenAI client initialized successfully!")
+                    except Exception as e:
+                        st.error(f"🚨 Azure client failed: {e}")
+                        st.stop()
+
+                # Now safely call condense function
                 condensed_rfp = condense_rfp_text(rfp_text, client)
-
-
+                # 🧩 --- End of fix ---
 
                 time.sleep(1)
                 # --- 🔍 Auto-detect number of interfaces / integrations from RFP text ---
-                # import re
                 rfp_text = rfp_text.replace(",", "")
 
                 priority_keywords = ["ICOs?", "iCos?", "integration configuration objects?"]
@@ -640,22 +734,20 @@ if uploaded_file:
                         num_interfaces = None
                         detected_type = None
 
-                                # Display result
+                # Display result
                 if num_interfaces:
                     st.info(f"📊 Detected approximately **{num_interfaces} {detected_type}** in RFP.")
                 else:
                     st.warning("⚠️ No explicit integration count detected — using default or manual input.")
 
-                
                 if len(rfp_text.strip()) < 100:
                     status.update(label="Extraction Failed", state="error", expanded=False)
                     st.error("Could not extract enough text from the document. Please check the file.")
                     st.stop()
-                
+
                 st.success("1/6 ✅ RFP content extracted!")
                 status.update(label="🚀 Generating Proposal Sections... (20% Complete)", state="running")
 
-            
 
                 # STEP 2: Build or load knowledge base & Retrieve context
                 st.write("2/6 📚 Loading knowledge base and retrieving reference documents...")

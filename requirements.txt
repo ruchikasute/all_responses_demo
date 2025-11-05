@@ -1,19 +1,46 @@
+# # --- Core Framework ---
+# streamlit==1.51.0
+# python-dotenv==1.0.1
+
+# # --- OpenAI SDK ---
+# # You can usually keep the latest major openai version
+# openai==1.35.13 
+# # Align to a newer version for compatibility with langchain 0.2.x
+# langchain-openai==0.2.11
+
+# # --- LangChain Ecosystem (Aligned versions) ---
+# # Use compatible versions in the LangChain 0.2.x family
+# langchain==0.2.11 
+# langchain-community==0.2.11
+# langchain-core==0.2.1
+
+# langchain-pinecone==0.0.3
+
+# # --- Vector DB ---
+# pinecone-client==2.2.4
+
+# # --- NLP / Embeddings ---
+# sentence-transformers==2.2.2
+
+# # --- Document Handling ---
+# python-docx==1.1.2
+# PyPDF2==3.0.1
+
+
+
 # --- Core Framework ---
 streamlit==1.51.0
 python-dotenv==1.0.1
 
 # --- OpenAI SDK ---
-# You can usually keep the latest major openai version
-openai==1.35.13 
-# Align to a newer version for compatibility with langchain 0.2.x
-langchain-openai==0.2.11
+openai==1.35.13
 
 # --- LangChain Ecosystem (Aligned versions) ---
-# Use compatible versions in the LangChain 0.2.x family
+# CRITICAL FIX: Upgraded core to 0.3.x to satisfy langchain-openai 0.2.11
 langchain==0.2.11 
 langchain-community==0.2.11
-langchain-core==0.2.1
-
+langchain-core==0.3.21  # This meets the required >=0.3.21
+langchain-openai==0.2.11 
 langchain-pinecone==0.0.3
 
 # --- Vector DB ---

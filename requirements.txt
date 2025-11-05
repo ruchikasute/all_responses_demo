@@ -11,25 +11,27 @@
 # pinecone-client
 
 
-# Core Framework
-streamlit
+# Core framework
+streamlit==1.35.0
+python-dotenv==1.0.1
 
-# LLM + Azure/OpenAI
-openai
-python-dotenv
+# OpenAI / Azure
+openai==1.35.13
 
-# LangChain ecosystem
-langchain
+# LangChain ecosystem (versions must align)
+langchain==0.3.0
+langchain-core==0.3.15
+langchain-community==0.3.0
+langchain-openai==0.2.4
 langchain-pinecone==0.2.3
-langchain-community
 
-# Vector DB (Modern Pinecone SDK)
+# Vector DB
 pinecone==5.4.2
+pinecone-client==2.2.4
 
-# Embeddings + NLP
-sentence-transformers
+# NLP / Embeddings
+sentence-transformers==2.2.2
 
-# Document handling
-python-docx
-PyPDF2
-
+# Document parsing
+python-docx==1.1.2
+PyPDF2==3.0.1

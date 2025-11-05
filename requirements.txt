@@ -11,14 +11,25 @@
 # pinecone-client
 
 
-# Primary Application Framework
+# Core Framework
 streamlit
-python-dotenv
-pypdf2
-python-docx
+
+# LLM + Azure/OpenAI
 openai
-langchain-openai
-langchain-core
-pinecone-client
+python-dotenv
+
+# LangChain ecosystem
+langchain
+langchain-pinecone==0.2.3
 langchain-community
+
+# Vector DB (Modern Pinecone SDK)
+pinecone==5.4.2
+
+# Embeddings + NLP
 sentence-transformers
+
+# Document handling
+python-docx
+PyPDF2
+

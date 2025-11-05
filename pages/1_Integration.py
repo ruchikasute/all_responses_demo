@@ -121,58 +121,92 @@ def extract_text(file):
     return ""
 
 
-from pinecone import Pinecone, ServerlessSpec
+# from pinecone import Pinecone, ServerlessSpec
+# from langchain_pinecone import PineconeVectorStore
+# from langchain_community.embeddings import HuggingFaceEmbeddings
+# import os
+# ---- Pinecone Compatibility Import ----
+import pinecone
 from langchain_pinecone import PineconeVectorStore
 from langchain_community.embeddings import HuggingFaceEmbeddings
-import os
+
+# @st.cache_resource(show_spinner=False)
+# def build_knowledge_base(folder="Knowledge_Repo"):
+#     embedding_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+
+#     pc = Pinecone(api_key=os.getenv("PINECONE_API_KEY"))
+#     index_name = "response-generator"
+
+#     # Create index if it doesn't exist
+#     if index_name not in [idx["name"] for idx in pc.list_indexes()]:
+#         pc.create_index(
+#             name=index_name,
+#             dimension=384,  # ✅ MiniLM-L6-v2 has 384 dims (not 1024)
+#             metric="cosine",
+#             spec=ServerlessSpec(cloud="aws", region="us-east-1")
+#         )
+
+#     index = pc.Index(index_name)
+
+#     vector_store = PineconeVectorStore(index=index, embedding=embedding_model)
+
+#     # --- Upload documents if index is empty ---
+#     stats = pc.describe_index(index_name)
+#     if stats.get("status", {}).get("ready", False):
+#         # Load local RFP references
+#         docs = []
+#         for file in os.listdir(folder):
+#             if file.endswith((".pdf", ".docx")):
+#                 path = os.path.join(folder, file)
+#                 text = extract_text(open(path, "rb"))
+#                 if text.strip():
+#                     docs.append(LDocument(page_content=text, metadata={"source": file}))
+
+#         # Before uploading, check which files already exist
+#         existing_docs = [
+#             m.metadata.get("source") 
+#             for m in vector_store.similarity_search("test", k=10)
+#             if m.metadata and "source" in m.metadata
+#         ]
+
+#         new_docs = [d for d in docs if d.metadata["source"] not in existing_docs]
+
+#         if new_docs:
+#             vector_store.add_documents(new_docs)
+#             print(f"✅ Added {len(new_docs)} new docs to Pinecone")
+#         else:
+#             print("✅ Knowledge base already up to date — no new uploads")
+
+
+#     return vector_store
+
 @st.cache_resource(show_spinner=False)
 def build_knowledge_base(folder="Knowledge_Repo"):
+    """Build or connect to Pinecone-based knowledge base using modern SDK (v5.x+)."""
+    import os
+    from pinecone import Pinecone, ServerlessSpec
+    from langchain_pinecone import PineconeVectorStore
+    from langchain_community.embeddings import HuggingFaceEmbeddings
+
     embedding_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
 
+    # ✅ Initialize new Pinecone client
     pc = Pinecone(api_key=os.getenv("PINECONE_API_KEY"))
+
     index_name = "response-generator"
 
-    # Create index if it doesn't exist
-    if index_name not in [idx["name"] for idx in pc.list_indexes()]:
+    # Create index if missing
+    existing_indexes = [idx["name"] for idx in pc.list_indexes()]
+    if index_name not in existing_indexes:
         pc.create_index(
             name=index_name,
-            dimension=384,  # ✅ MiniLM-L6-v2 has 384 dims (not 1024)
+            dimension=384,
             metric="cosine",
             spec=ServerlessSpec(cloud="aws", region="us-east-1")
         )
 
     index = pc.Index(index_name)
-
     vector_store = PineconeVectorStore(index=index, embedding=embedding_model)
-
-    # --- Upload documents if index is empty ---
-    stats = pc.describe_index(index_name)
-    if stats.get("status", {}).get("ready", False):
-        # Load local RFP references
-        docs = []
-        for file in os.listdir(folder):
-            if file.endswith((".pdf", ".docx")):
-                path = os.path.join(folder, file)
-                text = extract_text(open(path, "rb"))
-                if text.strip():
-                    docs.append(LDocument(page_content=text, metadata={"source": file}))
-
-        # Before uploading, check which files already exist
-        existing_docs = [
-            m.metadata.get("source") 
-            for m in vector_store.similarity_search("test", k=10)
-            if m.metadata and "source" in m.metadata
-        ]
-
-        new_docs = [d for d in docs if d.metadata["source"] not in existing_docs]
-
-        if new_docs:
-            vector_store.add_documents(new_docs)
-            print(f"✅ Added {len(new_docs)} new docs to Pinecone")
-        else:
-            print("✅ Knowledge base already up to date — no new uploads")
-
-
     return vector_store
 
 def condense_rfp_text(rfp_text, client):

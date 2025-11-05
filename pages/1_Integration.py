@@ -690,29 +690,43 @@ if uploaded_file:
                     st.error("❌ Missing or invalid Azure credentials. Check secrets.")
                     st.stop()
                 else:
+                    # try:
+                    #     # ✅ Final fix: disable Streamlit Cloud proxy injection
+                    #     # client = AzureOpenAI(
+                    #     #     azure_endpoint=endpoint,
+                    #     #     api_key=key,
+                    #     #     api_version=version,
+                    #     #     http_client=DefaultHttpxClient(proxies=None)
+                    #     # )
+                    #     client = AzureOpenAI(
+                    #         azure_endpoint=endpoint,
+                    #         api_key=key,
+                    #         api_version=version,
+                    #     )
+
+                    #     st.success("✅ AzureOpenAI client initialized successfully!")
+
+                    # except TypeError:
+                    #     # fallback if Streamlit still interferes
+                    #     st.warning("⚠️ AzureOpenAI failed, using standard OpenAI client instead.")
+                    #     client = OpenAI(api_key=key, base_url=f"{endpoint}/openai/deployments/Codetest")
+
+                    # except Exception as e:
+                    #     st.error(f"🚨 Azure client failed: {e}")
+                    #     st.stop()
+
+
+
                     try:
-                        # ✅ Final fix: disable Streamlit Cloud proxy injection
-                        # client = AzureOpenAI(
-                        #     azure_endpoint=endpoint,
-                        #     api_key=key,
-                        #     api_version=version,
-                        #     http_client=DefaultHttpxClient(proxies=None)
-                        # )
                         client = AzureOpenAI(
                             azure_endpoint=endpoint,
                             api_key=key,
                             api_version=version,
                         )
-
                         st.success("✅ AzureOpenAI client initialized successfully!")
 
-                    except TypeError:
-                        # fallback if Streamlit still interferes
-                        st.warning("⚠️ AzureOpenAI failed, using standard OpenAI client instead.")
-                        client = OpenAI(api_key=key, base_url=f"{endpoint}/openai/deployments/Codetest")
-
                     except Exception as e:
-                        st.error(f"🚨 Azure client failed: {e}")
+                        st.error(f"🚨 Azure client initialization failed: {e}")
                         st.stop()
 
                 # --- Continue your logic after client setup ---

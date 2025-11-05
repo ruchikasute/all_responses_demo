@@ -1,0 +1,24 @@
+# streamlit
+# langchain
+# langchain-community
+# langchain-core
+# langchain-pinecone
+# sentence-transformers
+# faiss-cpu
+# openai
+# tiktoken
+# huggingface-hub
+# pinecone-client
+
+
+# Primary Application Framework
+streamlit
+python-dotenv
+pypdf2
+python-docx
+openai
+langchain-openai
+langchain-core
+pinecone-client
+langchain-community
+sentence-transformers

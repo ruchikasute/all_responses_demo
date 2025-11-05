@@ -15,23 +15,22 @@
 streamlit==1.51.0
 python-dotenv==1.0.1
 
-# OpenAI SDK (modern)
-openai==1.54.4
+# OpenAI SDK (compatible with old LangChain bridge)
+openai==1.35.13
 
-# LangChain ecosystem (matching internal APIs)
-langchain==0.3.7
-langchain-core==0.3.19
-langchain-community==0.3.7
-langchain-openai==0.2.7
-langchain-pinecone==0.2.3
+# LangChain family (locked to stable combo)
+langchain==0.2.12
+langchain-core==0.2.34
+langchain-community==0.2.11
+langchain-openai==0.1.6
+langchain-pinecone==0.1.2
 
-# Vector DB
-pinecone==5.4.2
+# Pinecone old client
 pinecone-client==2.2.4
 
-# NLP / Embeddings
+# Embeddings + NLP
 sentence-transformers==2.2.2
 
-# Document parsing
+# Document handling
 python-docx==1.1.2
 PyPDF2==3.0.1
